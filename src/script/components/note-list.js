@@ -61,7 +61,7 @@ class NoteList extends HTMLElement {
             class="note-item"
             title="${this._sanitize(note.title)}" 
             body="${this._sanitize(note.body)}" 
-            created-at="${this._sanitize(note.createdAt)}">
+            createdAt="${this._sanitize(note.createdAt)}">
           </note-item>
         `).join('')}
       </div>
