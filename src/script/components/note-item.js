@@ -20,9 +20,9 @@ class NoteItem extends HTMLElement {
     this._shadowRoot.innerHTML = '';
 }
   connectedCallback() {
-    const title = this.getAttribute('title') || 'No Title';
-    const body = this.getAttribute('body') || 'No Body';
-    const createdAt = this.getAttribute('created-at') || 'No Date';
+    const title = this.getAttribute('title');
+    const body = this.getAttribute('body');
+    const createdAt = this.getAttribute('createdAt');
 
     this._shadowRoot.innerHTML = `
       <style>
