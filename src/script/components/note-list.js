@@ -7,6 +7,9 @@ class NoteList extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this.shadowRoot.addEventListener('delete-note', (event) => {
+      this.removeNoteFromList(event.detail.id);
+    });
   }
 
   set notes(value) {
@@ -61,7 +64,8 @@ class NoteList extends HTMLElement {
             class="note-item"
             title="${this._sanitize(note.title)}" 
             body="${this._sanitize(note.body)}" 
-            createdAt="${this._sanitize(note.createdAt)}">
+            created-at="${this._sanitize(note.createdAt)}"
+            id="${note.id}">
           </note-item>
         `).join('')}
       </div>
@@ -71,7 +75,16 @@ class NoteList extends HTMLElement {
   addNoteToList(note) {
     this._notes.push(note);
     this.render();
-}
+  }
+
+  removeNoteFromList(id) {
+    this._notes = this._notes.filter(note => note.id !== id);
+    this.render();
+    this.dispatchEvent(new CustomEvent('note-removed', {
+      detail: { id }
+    }));
+  }
+
   _sanitize(input) {
     const div = document.createElement('div');
     div.textContent = input;
