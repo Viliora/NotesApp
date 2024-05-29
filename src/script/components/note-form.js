@@ -14,25 +14,20 @@ class NoteForm extends HTMLElement {
   }
 
   addNote() {
-    // Mendapatkan nilai dari input judul dan body catatan
     const title = this.querySelector('#noteTitle').value;
     const body = this.querySelector('#noteBody').value;
 
-    // Memeriksa apakah judul dan body tidak kosong
     if (title && body) {
-      // Membuat objek catatan baru
       const newNote = {
-        id: 'note-' + Date.now(), // Menggunakan timestamp sebagai ID unik
+        id: 'note-' + Date.now(),
         title: title,
         body: body,
         createdAt: new Date().toISOString(),
         archived: false,
       };
 
-      // Mendapatkan elemen note-list
       const noteList = document.querySelector('note-list');
 
-      // Menambahkan catatan baru ke dalam data catatan dan merender ulang daftar catatan
       if (noteList) {
         noteList.addNoteToList(newNote);
 
