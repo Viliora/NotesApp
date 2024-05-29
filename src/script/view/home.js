@@ -1,70 +1,75 @@
+import Utils from "../utils";
+import NotesApi from "../data/remote/notes-api.js";
+
+const showLoader = () => {
+    const loader = document.querySelector(".loader");
+    if (loader) {
+        loader.classList.remove("loader--hidden");
+        Utils.showElement(loader);
+    }
+};
+
+const hideLoader = () => {
+    const loader = document.querySelector(".loader");
+    if (loader) {
+        loader.classList.add("loader--hidden");
+    }
+};
+
 const home = () => {
     const BASE_URL = "https://notes-api.dicoding.dev/v2";
 
-    // Fungsi untuk menampilkan indikator loading
-    function showLoadingIndicator() {
-        const loadingIndicator = document.querySelector(".loader");
-        loadingIndicator.style.display = "block";
-    }
-
-    // Fungsi untuk menyembunyikan indikator loading
-    function hideLoadingIndicator() {
-        const loadingIndicator = document.querySelector(".loader");
-        loadingIndicator.style.display = "none";
-    }
-
-    function getNote() {
-        showLoadingIndicator();
-    
-        fetch(`${BASE_URL}/notes`)
-            .then((response) => {
-                hideLoadingIndicator();
-                return response.json();
-            })
-            .then((responseJson) => {
-                if (responseJson.error) {
-                    showResponseMessage(responseJson.message);
-                } else {
-                    renderAllNote(responseJson.data);
-                }
-            })
-            .catch((error) => {
-                hideLoadingIndicator();
-                showResponseMessage(error);
-            });
-    }
-
-    const insertNote = (note) => {
-        fetch(`${BASE_URL}/notes`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(note),
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
+    const getNote = async () => {
+        showLoader();
+        try {
+            const response = await fetch(`${BASE_URL}/notes`);
+            const responseJson = await response.json();
+            hideLoader();
+            if (responseJson.error) {
                 showResponseMessage(responseJson.message);
-                console.log(responseJson);
-                getNote(); // Memanggil fungsi untuk memperbarui daftar catatan setelah menambahkan catatan baru
-            })
-            .catch((error) => {
-                showResponseMessage(error);
-            });
+            } else {
+                renderAllNote(responseJson.data);
+            }
+        } catch (error) {
+            hideLoader();
+            showResponseMessage(error);
+        }
     };
 
-    const removeNote = (noteId) => {
-        fetch(`${BASE_URL}/notes/${noteId}`, {
-            method: "DELETE",
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                showResponseMessage(responseJson.message);
-                getNote();
-            })
-            .catch((error) => {
-                showResponseMessage(error);
+    const insertNote = async (note) => {
+        showLoader();
+        try {
+            const response = await fetch(`${BASE_URL}/notes`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(note),
             });
+            const responseJson = await response.json();
+            hideLoader();
+            showResponseMessage(responseJson.message);
+            getNote();
+        } catch (error) {
+            hideLoader();
+            showResponseMessage(error);
+        }
+    };
+
+    const removeNote = async (noteId) => {
+        showLoader();
+        try {
+            const response = await fetch(`${BASE_URL}/notes/${noteId}`, {
+                method: "DELETE",
+            });
+            const responseJson = await response.json();
+            hideLoader();
+            showResponseMessage(responseJson.message);
+            getNote();
+        } catch (error) {
+            hideLoader();
+            showResponseMessage(error);
+        }
     };
 
     const showResponseMessage = (message = "Check your internet connection") => {
@@ -72,54 +77,30 @@ const home = () => {
     };
 
     const renderAllNote = (notes) => {
-        const noteListContainerElement = document.querySelector("#noteListContainer");
-        // Clear existing content
+        const noteListContainerElement = document.querySelector("#notesListContainer");
         noteListContainerElement.innerHTML = "";
 
-        // Render new notes
-        notes.forEach((note) => {
-            noteListContainerElement.innerHTML += `
-                <div class="card">
-                    <div class="card-head">
-                        <h3 id="notesTitle">${note.title}</h3>
-                        <button class="deleteBtn" data-note-id="${note.id}">Delete</button>
-                    </div>
-                    <div id="notesDesc">${note.body}</div>
-                </div>
-            `;
-        });
+        const noteListElement = document.createElement('note-list');
+        noteListElement.notes = notes;
+        noteListContainerElement.appendChild(noteListElement);
 
-        const buttons = document.querySelectorAll(".deleteBtn");
-        buttons.forEach((button) => {
-            button.addEventListener("click", (event) => {
-                const noteId = event.target.getAttribute("data-note-id");
-                removeNote(noteId);
-            });
+        noteListElement.addEventListener('note-removed', (event) => {
+            removeNote(event.detail.id);
         });
     };
 
-    // Tampilkan indikator loading saat halaman dimuat
-    showLoadingIndicator();
-
     document.addEventListener("DOMContentLoaded", () => {
-        const inputNoteTitle = document.querySelector("#noteTitle");
-        const inputNoteDescription = document.querySelector("#noteDesc");
-        const saveBtn = document.querySelector("#saveBtn");
-
-        saveBtn.addEventListener("click", function () {
-            console.log("berhasil ditekan");
+        document.querySelector("#addNoteBtn").addEventListener("click", function () {
             const note = {
-                title: inputNoteTitle.value,
-                body: inputNoteDescription.value,
+                title: document.querySelector("#noteTitle").value,
+                body: document.querySelector("#noteBody").value,
             };
-            console.log("Data catatan:", note);
             insertNote(note);
         });
 
         getNote();
     });
 
-    // Validasi Form custom
     const form = document.querySelector(".notes-form");
     const titleInput = form.elements.noteTitle;
     const descInput = form.elements.noteDesc;
@@ -131,18 +112,16 @@ const home = () => {
 
         if (!e.target.validity.valid) {
             e.target.setCustomValidity("Wajib diisi.");
-            return;
         }
     });
 
     descInput.addEventListener("invalid", (e) => {
         e.target.setCustomValidity("");
-    
+
         if (!e.target.validity.valid) {
             e.target.setCustomValidity("Wajib diisi.");
-            return;
         }
-    });    
-}
+    });
+};
 
 export default home;
