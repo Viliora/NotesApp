@@ -17,58 +17,41 @@ const hideLoader = () => {
 };
 
 const home = () => {
-    const BASE_URL = "https://notes-api.dicoding.dev/v2";
-
     const getNote = async () => {
         showLoader();
         try {
-            const response = await fetch(`${BASE_URL}/notes`);
-            const responseJson = await response.json();
+            const notes = await NotesApi.getAllNotes();
             hideLoader();
-            if (responseJson.error) {
-                showResponseMessage(responseJson.message);
-            } else {
-                renderAllNote(responseJson.data);
-            }
+            renderAllNote(notes);
         } catch (error) {
             hideLoader();
-            showResponseMessage(error);
+            showResponseMessage(error.message);
         }
     };
 
     const insertNote = async (note) => {
         showLoader();
         try {
-            const response = await fetch(`${BASE_URL}/notes`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(note),
-            });
-            const responseJson = await response.json();
+            const response = await NotesApi.addNote(note);
             hideLoader();
-            showResponseMessage(responseJson.message);
+            showResponseMessage(response.message);
             getNote();
         } catch (error) {
             hideLoader();
-            showResponseMessage(error);
+            showResponseMessage(error.message);
         }
     };
 
     const removeNote = async (noteId) => {
         showLoader();
         try {
-            const response = await fetch(`${BASE_URL}/notes/${noteId}`, {
-                method: "DELETE",
-            });
-            const responseJson = await response.json();
+            const response = await NotesApi.deleteNoteById(noteId);
             hideLoader();
-            showResponseMessage(responseJson.message);
+            showResponseMessage(response.message);
             getNote();
         } catch (error) {
             hideLoader();
-            showResponseMessage(error);
+            showResponseMessage(error.message);
         }
     };
 
