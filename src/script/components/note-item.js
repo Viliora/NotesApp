@@ -6,7 +6,6 @@ class NoteItem extends HTMLElement {
 
   connectedCallback() {
     this.render();
-    // Event listener for delete button
     this._shadowRoot.querySelector('.button-delete').addEventListener('click', () => {
       const id = this.getAttribute('id');
       const event = new CustomEvent('delete-note', {
