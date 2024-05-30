@@ -18,6 +18,11 @@ header {
     padding: 20px 0;
 }
 
+h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .container {
     width: 100%;
     max-width: 800px;
@@ -74,31 +79,72 @@ button {
     margin: 0 0 20px;
     cursor: pointer;   
 }
+.loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #333333;
+    transition: opacity 0.75s, visibility 0.75s;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
 
-.loading-indicator {
+.loader--hidden {
     display: none;
-    text-align: center;
-    font-size: 18px;
-    padding: 20px;
-    animation: spin 1s linear infinite; /* Memanggil animasi 'spin' dengan durasi 1 detik, linear easing, dan berputar secara tak terbatas */
+    opacity: 0;
+    visibility: hidden;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); } /* Rotasi awal pada 0 derajat */
-    100% { transform: rotate(360deg); } /* Rotasi selesai pada 360 derajat (satu putaran penuh) */
+.loader::after {
+    content: "";
+    width: 75px;
+    height: 75px;
+    border: 15px solid #dddddd;
+    border-top-color: #009578;
+    border-radius: 50%;
+    animation: loading 2s ease infinite;
 }
+
+@keyframes loading {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
 
 .main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1A4D2E, #4F6F52);
+    color: #fff;
 }
 
-.form-container {
+#app {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-container h2{
     display: flex;
-    flex-direction: column;
     align-items: center;
+    font-size: 35px;
+    font-weight: 600;
+}
+
+.notes-list-container h2{
+    display: flex;
+    align-items: center;
+    font-size: 35px;
+    font-weight: 600;
 }
 
 .card {
@@ -125,4 +171,3 @@ button {
 .deleteBtn:hover {
     background: #e74c3c;
 }
-
