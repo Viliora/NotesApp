@@ -46,13 +46,17 @@ class NoteItem extends HTMLElement {
         color: #777;
       }
       button {
-        background: #f44336;
+        background: linear-gradient(#e8dfca, #4f6f52);
         color: white;
         border: none;
         padding: 10px;
         border-radius: 5px;
         cursor: pointer;
       }
+      button:hover{
+        background: #e74c3c;
+      }
+      
     </style>
       <div class="note-item">
         <h3>${title}</h3>
