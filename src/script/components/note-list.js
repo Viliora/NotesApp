@@ -48,14 +48,13 @@ class NoteList extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host {
-          display: block;
-          padding: 16px;
-          background: #f9f9f9;
-          border-radius: 8px;
-          box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
         }
         .note-item {
-          margin-bottom: 20px;
+          border: 1px solid #ccc;
+          padding: 10px;
         }
       </style>
       <div class="note-list">
