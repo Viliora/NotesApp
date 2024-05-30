@@ -32,21 +32,27 @@ const home = () => {
     const insertNote = async (note) => {
         showLoader();
         try {
-            const response = await NotesApi.addNote(note);
-            hideLoader();
-            showResponseMessage(response.message);
-            getNote();
+          const response = await NotesApi.addNote(note);
+          const addedNote = response.note;
+          hideLoader();
+          const noteList = document.querySelector("note-list");
+          if (noteList) {
+            noteList.addNoteToList(addedNote);
+          } else {
+            console.error("note-list element not found");
+          }
         } catch (error) {
-            hideLoader();
-            showResponseMessage(error.message);
+          hideLoader();
+          console.error("Error adding note:", error.message);
         }
-    };
+      };
 
     const removeNote = async (noteId) => {
         showLoader();
         try {
             const response = await NotesApi.deleteNoteById(noteId);
             hideLoader();
+            console.log('Note removed:', response);
             showResponseMessage(response.message);
             getNote();
         } catch (error) {
@@ -68,19 +74,35 @@ const home = () => {
         noteListContainerElement.appendChild(noteListElement);
 
         noteListElement.addEventListener('note-removed', (event) => {
+            console.log('Note removed event:', event.detail.id);
             removeNote(event.detail.id);
         });
     };
 
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#addNoteBtn").addEventListener("click", function () {
+            const titleElement = document.querySelector("#noteTitle");
+            const bodyElement = document.querySelector("#noteBody");
+
+            console.log('Title element:', titleElement);
+            console.log('Body element:', bodyElement);
+
+            if (!titleElement || !bodyElement) {
+                console.error('Title or body element not found');
+                return;
+            }
+
             const note = {
-                title: document.querySelector("#noteTitle").value,
-                body: document.querySelector("#noteBody").value,
+                title: titleElement.value,
+                body: bodyElement.value,
             };
+
+            console.log('Adding note:', note);
+
             insertNote(note);
         });
 
+        
         getNote();
     });
 
