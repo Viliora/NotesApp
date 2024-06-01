@@ -7,10 +7,6 @@ class NoteForm extends HTMLElement {
           <button id="addNoteBtn">Add Note</button>
       </div>
     `;
-
-    this.querySelector('#addNoteBtn').addEventListener('click', () => {
-      this.addNote();
-    });
   }
 
   addNote() {
