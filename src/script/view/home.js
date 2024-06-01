@@ -101,10 +101,8 @@ const home = () => {
 
             insertNote(note);
         });
-
-        
-        getNote();
     });
+    getNote();
 
     const form = document.querySelector(".notes-form");
     const titleInput = form.elements.noteTitle;
